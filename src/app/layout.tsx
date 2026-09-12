@@ -1,0 +1,50 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { Providers } from "@/components/providers";
+import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/lib/utils";
+import "./globals.css";
+
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const site = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(site),
+  title: { default: `${APP_NAME} — ${APP_TAGLINE}`, template: `%s · ${APP_NAME}` },
+  description: APP_DESCRIPTION,
+  openGraph: {
+    title: APP_NAME,
+    description: APP_DESCRIPTION,
+    images: ["/og.png"],
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: APP_NAME, description: APP_DESCRIPTION, images: ["/og.png"] },
+  icons: { icon: "/favicon.svg" },
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable} h-full`} suppressHydrationWarning>
+      <body className="flex min-h-full flex-col antialiased">
+        <Providers>
+          <a href="#content" className="skip-link">
+            Skip to content
+          </a>
+          <SiteHeader />
+          <main id="content" className="flex-1">
+            {children}
+          </main>
+          <SiteFooter />
+        </Providers>
+      </body>
+    </html>
+  );
+}

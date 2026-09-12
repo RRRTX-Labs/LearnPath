@@ -1,0 +1,199 @@
+@import "tailwindcss" source("../");
+@source not "../../node_modules";
+@source not "../../.next";
+@source not "../../docs";
+@source not "../../content";
+@source not "../../tests";
+@source not "../../branding";
+
+:root {
+  --bg: #f6f3ec;
+  --bg-sunken: #ece7dc;
+  --surface: #fffcf6;
+  --surface-2: #ffffff;
+  --fg: #16161d;
+  --muted: #5c6573;
+  --border: rgba(22, 22, 29, 0.1);
+  --primary: #0f766e;
+  --primary-fg: #f4fffd;
+  --accent: #b45309;
+  --danger: #b42318;
+  --warning: #a16207;
+  --success: #047857;
+  --info: #1d4ed8;
+  --ring: #0f766e;
+  --grid: rgba(22, 22, 29, 0.06);
+  --path: #0f766e;
+  --glow: rgba(15, 118, 110, 0.18);
+  --shadow: 0 8px 30px rgba(22, 22, 29, 0.08);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font-display: var(--font-instrument);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.dark {
+  --bg: #090a0c;
+  --bg-sunken: #050506;
+  --surface: #12151c;
+  --surface-2: #191d27;
+  --fg: #f4f1ea;
+  --muted: #9aa3b2;
+  --border: rgba(255, 255, 255, 0.08);
+  --primary: #2dd4bf;
+  --primary-fg: #042f2e;
+  --accent: #f5b942;
+  --danger: #f07167;
+  --warning: #e3b341;
+  --success: #3ddc97;
+  --info: #7aa2ff;
+  --ring: #2dd4bf;
+  --grid: rgba(255, 255, 255, 0.035);
+  --path: #2dd4bf;
+  --glow: rgba(45, 212, 191, 0.16);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-info: var(--info);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  min-height: 100%;
+}
+
+body {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center top;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 40%, transparent);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.link-plain {
+  color: var(--primary);
+  text-underline-offset: 3px;
+}
+.link-plain:hover {
+  text-decoration: underline;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -40px;
+  z-index: 80;
+  background: var(--primary);
+  color: var(--primary-fg);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+@keyframes draw-path {
+  from {
+    stroke-dashoffset: 240;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 240;
+  animation: draw-path 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-draw,
+  .animate-pulse-node {
+    animation: none !important;
+  }
+}
+
+.prose-lp {
+  max-width: 68ch;
+  line-height: 1.65;
+  color: var(--fg);
+}
+.prose-lp p + p {
+  margin-top: 1rem;
+}
+.prose-lp a {
+  color: var(--primary);
+  text-underline-offset: 3px;
+}
+.prose-lp a:hover {
+  text-decoration: underline;
+}
