@@ -25,6 +25,26 @@ export function completedIds(list: ProgressRecord[], type: EntityType): Set<stri
   return new Set(list.filter((p) => p.entityType === type && p.status === "completed").map((p) => p.entityId));
 }
 
+/**
+ * Apply `record` to `list` and report whether anything actually changed.
+ * Completion is sticky: a later "started" never downgrades a "completed",
+ * and in that case nothing must be synced to the server.
+ */
+export function applyProgress(
+  list: ProgressRecord[],
+  record: ProgressRecord,
+): { next: ProgressRecord[]; changed: boolean } {
+  const i = list.findIndex((p) => p.entityType === record.entityType && p.entityId === record.entityId);
+  if (i === -1) return { next: [...list, record], changed: true };
+  const current = list[i];
+  if (current.status === "completed" && record.status === "started") {
+    return { next: list, changed: false };
+  }
+  const next = list.slice();
+  next[i] = record;
+  return { next, changed: true };
+}
+
 export function mergeProgress(local: ProgressRecord[], remote: ProgressRecord[]): ProgressRecord[] {
   const map = new Map<string, ProgressRecord>();
   for (const item of [...remote, ...local]) {

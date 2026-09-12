@@ -3,13 +3,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import {
+  applyProgress,
   LOCAL_NOTES_KEY,
   LOCAL_PROGRESS_KEY,
   mergeProgress,
   type ProgressRecord,
   type EntityType,
   type ProgressStatus,
-  upsertProgress,
 } from "@/lib/progress-shared";
 
 type Ctx = {
@@ -26,6 +26,8 @@ const ProgressContext = createContext<Ctx | null>(null);
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const isAuthed = Boolean(session?.user);
   const [progress, setProgress] = useState<ProgressRecord[]>([]);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [ready, setReady] = useState(false);
@@ -35,7 +37,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     async function load() {
       const local: ProgressRecord[] = JSON.parse(localStorage.getItem(LOCAL_PROGRESS_KEY) || "[]");
       const localNotes: Record<string, string> = JSON.parse(localStorage.getItem(LOCAL_NOTES_KEY) || "{}");
-      if (!session?.user) {
+      if (!isAuthed) {
         if (!cancelled) {
           setProgress(local);
           setNotes(localNotes);
@@ -75,21 +77,19 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-    // Re-load when the authenticated user changes.
-  }, [session?.user?.id]);
+    // Re-load when the authenticated user changes; primitives keep the
+    // dependency list referentially stable.
+  }, [userId, isAuthed]);
 
-  const persist = useCallback(
-    (next: ProgressRecord[]) => {
-      setProgress(next);
-      if (!session?.user) {
-        localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(next));
-        return;
-      }
-      const last = next[next.length - 1];
+  // Sends exactly the records that changed. Never the array tail: upsertProgress
+  // replaces existing entities in place, so the tail is usually an unrelated record.
+  const syncRecord = useCallback(
+    (record: ProgressRecord) => {
+      if (!session?.user) return;
       fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(last),
+        body: JSON.stringify(record),
       }).catch(() => {});
     },
     [session?.user],
@@ -97,9 +97,17 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   const mark = useCallback(
     (entityType: EntityType, entityId: string, status: ProgressStatus = "completed") => {
-      persist(upsertProgress(progress, { entityType, entityId, status, updatedAt: Date.now() }));
+      const record: ProgressRecord = { entityType, entityId, status, updatedAt: Date.now() };
+      const { next, changed } = applyProgress(progress, record);
+      setProgress(next);
+      if (!session?.user) {
+        localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(next));
+        return;
+      }
+      // Sync exactly the record that changed — never the array tail.
+      if (changed) syncRecord(record);
     },
-    [persist, progress],
+    [progress, session?.user, syncRecord],
   );
 
   const isDone = useCallback(

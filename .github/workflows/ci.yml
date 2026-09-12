@@ -16,7 +16,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run content:validate
-      - run: npm run typecheck
+      # typecheck must run AFTER a build once: Next.js generates the route
+      # types (.next/types) that typed App Router files reference. Running it
+      # first made CI fail on every clean clone. See docs/V1-UPGRADE-AUDIT.md §3.1.
       - run: npm run lint
       - run: npm test
       - run: npm run build
@@ -25,3 +27,4 @@ jobs:
           BETTER_AUTH_URL: http://localhost:3000
           BETTER_AUTH_SECRET: ci-secret-ci-secret-ci-secret-ci
           TURSO_DATABASE_URL: file:./data/learnpath.db
+      - run: npm run typecheck

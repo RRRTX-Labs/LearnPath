@@ -23,6 +23,16 @@ export const resourceLabelSchema = z.enum([
 
 export const levelSchema = z.enum(["beginner", "intermediate", "advanced"]);
 
+export const resourceWarningSchema = z.enum([
+  "outdated",
+  "missing_project",
+  "fast_paced",
+  "advanced",
+  "incomplete",
+  "requires_prerequisites",
+  "framework_version_sensitive",
+]);
+
 export const resourceSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -41,6 +51,11 @@ export const resourceSchema = z.object({
   status: z.enum(["active", "unavailable", "deprecated"]).default("active"),
   editorNote: z.string(),
   labels: z.array(resourceLabelSchema).default([]),
+  // Additive v1.1 fields (research dataset). Optional so existing entries stay valid.
+  publishedAt: z.string().optional(),
+  warnings: z.array(resourceWarningSchema).default([]),
+  learningOutcomes: z.array(z.string()).default([]),
+  playlistVideoCount: z.number().int().positive().optional(),
 });
 
 export const skillSchema = z.object({
@@ -72,6 +87,13 @@ export const roadmapNodeSchema = z.object({
   requirement: z.enum(["required", "recommended", "optional"]).default("required"),
 });
 
+export const roadmapStageSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  nodeIds: z.array(z.string()).min(1),
+});
+
 export const roadmapSchema = z.object({
   id: z.string(),
   slug: z.string(),
@@ -93,6 +115,9 @@ export const roadmapSchema = z.object({
       kind: z.enum(["required", "recommended", "optional"]).default("required"),
     }),
   ),
+  // Learning-journey grouping: what a learner achieves per phase of the path.
+  // Every node should appear in exactly one stage; validated by validateCatalog.
+  stages: z.array(roadmapStageSchema).default([]),
 });
 
 export const challengeTestSchema = z.object({

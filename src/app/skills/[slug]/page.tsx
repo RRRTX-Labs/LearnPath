@@ -1,9 +1,17 @@
+import { ArrowRight, Hammer, Terminal } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResourceCard } from "@/components/resource-card";
-import { Badge, ButtonLink } from "@/components/ui";
-import { challengeById, projectById, resourcesForSkill, roadmaps, skillBySlug } from "@/lib/content";
+import { Badge, ButtonLink, Container, SectionHeader } from "@/components/ui";
+import {
+  challengeById,
+  projectById,
+  resourcesForSkill,
+  roadmaps,
+  skillById,
+  skillBySlug,
+} from "@/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -14,94 +22,134 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const skill = skillBySlug.get((await params).slug);
-  return skill ? { title: skill.title, description: skill.summary } : {};
+  return skill
+    ? { title: skill.title, description: skill.summary, alternates: { canonical: `/skills/${skill.slug}` } }
+    : {};
 }
 
 export default async function SkillPage({ params }: Props) {
   const skill = skillBySlug.get((await params).slug);
   if (!skill) notFound();
-  const resources = resourcesForSkill(skill);
-  const parent = roadmaps.find((r) => r.nodes.some((n) => n.skillId === skill.id));
+  const slotted = resourcesForSkill(skill);
+  const parents = roadmaps.filter((r) => r.nodes.some((n) => n.skillId === skill.id));
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <Container className="max-w-5xl py-12">
       <p className="eyebrow">Skill</p>
-      <h1 className="mt-2 font-display text-5xl">{skill.title}</h1>
-      <p className="mt-4 text-lg text-muted">{skill.summary}</p>
-      {parent ? (
-        <p className="mt-3 text-sm text-muted">
-          Part of{" "}
-          <Link className="text-primary" href={`/roadmaps/${parent.slug}`}>
-            {parent.title}
+      <h1 className="mt-2 font-display text-4xl md:text-5xl">{skill.title}</h1>
+      <p className="mt-4 max-w-2xl text-lg text-muted">{skill.summary}</p>
+
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        {parents.map((p) => (
+          <ButtonLink key={p.id} href={`/learn/${p.slug}/${skill.slug}`}>
+            Open learning workspace <ArrowRight className="h-4 w-4" aria-hidden />
+          </ButtonLink>
+        ))}
+        {parents.map((p) => (
+          <Link key={p.id} href={`/roadmaps/${p.slug}`} className="text-sm text-primary hover:underline">
+            in {p.title}
           </Link>
-        </p>
-      ) : null}
-      <div className="mt-6">
-        {parent ? (
-          <ButtonLink href={`/learn/${parent.slug}/${skill.slug}`}>Open learning workspace</ButtonLink>
-        ) : null}
-      </div>
-      <h2 className="mt-12 font-display text-3xl">Objectives</h2>
-      <ul className="mt-4 list-disc space-y-2 pl-5">
-        {skill.objectives.map((o) => (
-          <li key={o}>{o}</li>
         ))}
-      </ul>
+      </div>
+
       {skill.prerequisites.length ? (
-        <div className="mt-8">
-          <h2 className="font-display text-3xl">Prerequisites</h2>
+        <section className="mt-10" aria-labelledby="prereq">
+          <h2 id="prereq" className="eyebrow">
+            Do these first
+          </h2>
           <div className="mt-3 flex flex-wrap gap-2">
-            {skill.prerequisites.map((id) => (
-              <Badge key={id}>{id}</Badge>
-            ))}
+            {skill.prerequisites.map((id) => {
+              const pre = skillById.get(id);
+              return pre ? (
+                <Link key={id} href={`/skills/${pre.slug}`}>
+                  <Badge tone="warning" className="hover:border-warning/60">
+                    {pre.title}
+                  </Badge>
+                </Link>
+              ) : null;
+            })}
           </div>
-        </div>
+        </section>
       ) : null}
-      <h2 className="mt-12 font-display text-3xl">Resources</h2>
-      <p className="mt-2 text-sm text-muted">
-        Scores are LearnPath editorial opinions (clarity, cost, freshness, project density) — not an objective ranking.
-      </p>
-      <div className="mt-6 grid gap-4">
-        {resources.map(({ slot, resource }) => (
-          <ResourceCard key={resource.id} resource={resource} slot={slot} />
-        ))}
-      </div>
-      {skill.challengeIds.length ? (
-        <div className="mt-10">
-          <h2 className="font-display text-3xl">Challenges</h2>
-          <ul className="mt-3 space-y-2">
-            {skill.challengeIds.map((id) => {
-              const c = challengeById.get(id);
-              if (!c) return null;
-              return (
-                <li key={id}>
-                  <Link className="text-primary" href={`/challenges/${c.slug}`}>
-                    {c.title}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+
+      <section className="mt-10" aria-labelledby="objectives">
+        <h2 id="objectives" className="font-display text-2xl">
+          What you will be able to do
+        </h2>
+        <ul className="mt-3 space-y-2">
+          {skill.objectives.map((o) => (
+            <li key={o} className="flex items-start gap-2 text-sm">
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+              {o}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="mt-12" aria-labelledby="resources">
+        <SectionHeader eyebrow="Curated resources" title="Start with the pick, then branch out" />
+        <p className="mt-2 max-w-2xl text-sm text-muted">
+          Scores are LearnPath editorial opinions (clarity, cost, freshness, project density) — not an
+          objective ranking. Every YouTube item is embedded officially after a click-to-load facade.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {slotted.map(({ slot, resource }) => (
+            <ResourceCard key={`${slot}-${resource.id}`} resource={resource} slot={slot} />
+          ))}
         </div>
+      </section>
+
+      {skill.challengeIds.length || skill.projectIds.length ? (
+        <section className="mt-12 grid gap-4 md:grid-cols-2" aria-labelledby="apply">
+          <h2 id="apply" className="sr-only">
+            Apply it
+          </h2>
+          {skill.challengeIds.length ? (
+            <div className="surface rounded-lg p-5">
+              <p className="eyebrow flex items-center gap-2">
+                <Terminal className="h-3.5 w-3.5" aria-hidden /> Challenges
+              </p>
+              <ul className="mt-3 space-y-2 text-sm">
+                {skill.challengeIds.map((id) => {
+                  const c = challengeById.get(id);
+                  if (!c) return null;
+                  return (
+                    <li key={id}>
+                      <Link className="text-primary hover:underline" href={`/challenges/${c.slug}`}>
+                        {c.title}
+                      </Link>
+                      <span className="meta block">
+                        {c.language} · ~{c.estimatedMinutes} min
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
+          {skill.projectIds.length ? (
+            <div className="surface rounded-lg p-5">
+              <p className="eyebrow flex items-center gap-2">
+                <Hammer className="h-3.5 w-3.5" aria-hidden /> Projects
+              </p>
+              <ul className="mt-3 space-y-2 text-sm">
+                {skill.projectIds.map((id) => {
+                  const p = projectById.get(id);
+                  if (!p) return null;
+                  return (
+                    <li key={id}>
+                      <Link className="text-primary hover:underline" href={`/projects/${p.slug}`}>
+                        {p.title}
+                      </Link>
+                      <span className="meta block">~{p.estimatedHours}h build</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
+        </section>
       ) : null}
-      {skill.projectIds.length ? (
-        <div className="mt-10">
-          <h2 className="font-display text-3xl">Projects</h2>
-          <ul className="mt-3 space-y-2">
-            {skill.projectIds.map((id) => {
-              const p = projectById.get(id);
-              if (!p) return null;
-              return (
-                <li key={id}>
-                  <Link className="text-primary" href={`/projects/${p.slug}`}>
-                    {p.title}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ) : null}
-    </div>
+    </Container>
   );
 }
