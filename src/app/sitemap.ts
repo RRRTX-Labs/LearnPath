@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { challenges, projects, resources, roadmaps, skills } from "@/lib/content";
+import { getSiteUrl } from "@/lib/site-url";
 
 /**
  * Stable lastModified dates: content pages carry the catalog's verification
@@ -19,7 +20,7 @@ function entry(
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const base = getSiteUrl();
   const urls: MetadataRoute.Sitemap = [
     entry(`${base}/`, "weekly", 1),
     ...["/roadmaps", "/practice", "/challenges", "/projects", "/resources", "/courses", "/community", "/open-source"].map(

@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Providers } from "@/components/providers";
 import { APP_DESCRIPTION, APP_NAME, APP_TAGLINE } from "@/lib/utils";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -14,7 +15,7 @@ const instrument = Instrument_Serif({
   weight: "400",
 });
 
-const site = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const site = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(site),
