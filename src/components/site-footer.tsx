@@ -1,58 +1,77 @@
+import { MessagesSquare } from "lucide-react";
 import Link from "next/link";
+import { GitHubIcon } from "./github-icon";
+import { Mark } from "./logo";
+
+const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/RRRTX-Labs/LearnPath";
+const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE;
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-4">
+    <footer className="mt-auto border-t border-line">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
-          <p className="font-display text-xl">LearnPath</p>
-          <p className="mt-2 text-sm text-muted">Learn anything. Build everything.</p>
+          <div className="flex items-center gap-2.5">
+            <Mark className="h-7 w-7" />
+            <span className="font-display text-xl">LearnPath</span>
+          </div>
+          <p className="mt-3 max-w-xs text-sm text-muted">
+            Learn anything. Build everything. Free, structured learning paths built from the best
+            resources on the web.
+          </p>
+          <div className="mt-4 flex gap-2">
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md border border-line p-2 text-muted transition-colors hover:text-fg"
+              aria-label="LearnPath on GitHub"
+            >
+              <GitHubIcon className="h-4 w-4" />
+            </a>
+            {DISCORD_INVITE ? (
+              <a
+                href={DISCORD_INVITE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-line p-2 text-muted transition-colors hover:text-fg"
+                aria-label="Join the LearnPath Discord"
+              >
+                <MessagesSquare className="h-4 w-4" aria-hidden />
+              </a>
+            ) : null}
+          </div>
         </div>
-        <div className="text-sm">
+        <nav aria-label="Learn">
           <p className="eyebrow mb-3">Learn</p>
-          <ul className="space-y-2 text-muted">
-            <li>
-              <Link href="/roadmaps">Roadmaps</Link>
-            </li>
-            <li>
-              <Link href="/practice">Practice</Link>
-            </li>
-            <li>
-              <Link href="/challenges">Challenges</Link>
-            </li>
-            <li>
-              <Link href="/projects">Projects</Link>
-            </li>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-fg" href="/roadmaps">Roadmaps</Link></li>
+            <li><Link className="hover:text-fg" href="/skills/python-syntax">Skills</Link></li>
+            <li><Link className="hover:text-fg" href="/resources">Resources</Link></li>
+            <li><Link className="hover:text-fg" href="/practice">Practice</Link></li>
           </ul>
-        </div>
-        <div className="text-sm">
-          <p className="eyebrow mb-3">Community</p>
-          <ul className="space-y-2 text-muted">
-            <li>
-              <Link href="/community">Discord</Link>
-            </li>
-            <li>
-              <Link href="/open-source">Open source</Link>
-            </li>
-            <li>
-              <Link href="/resources">Resources</Link>
-            </li>
+        </nav>
+        <nav aria-label="Build">
+          <p className="eyebrow mb-3">Build</p>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-fg" href="/challenges">Challenges</Link></li>
+            <li><Link className="hover:text-fg" href="/projects">Projects</Link></li>
+            <li><Link className="hover:text-fg" href="/me">My learning</Link></li>
+            <li><Link className="hover:text-fg" href="/search">Search</Link></li>
           </ul>
-        </div>
-        <div className="text-sm">
-          <p className="eyebrow mb-3">Legal</p>
-          <ul className="space-y-2 text-muted">
-            <li>
-              <Link href="/privacy">Privacy</Link>
-            </li>
-            <li>
-              <Link href="/terms">Terms</Link>
-            </li>
+        </nav>
+        <nav aria-label="Project">
+          <p className="eyebrow mb-3">Project</p>
+          <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-fg" href="/community">Community</Link></li>
+            <li><Link className="hover:text-fg" href="/open-source">Open source</Link></li>
+            <li><Link className="hover:text-fg" href="/privacy">Privacy</Link></li>
+            <li><Link className="hover:text-fg" href="/terms">Terms</Link></li>
           </ul>
-        </div>
+        </nav>
       </div>
-      <p className="border-t border-border py-4 text-center font-mono text-[11px] uppercase tracking-wider text-muted">
-        Free and open source. No certificates. No paywall.
+      <p className="border-t border-line py-4 text-center font-mono text-[11px] uppercase tracking-wider text-muted">
+        Free and open source. No certificates. No paywall. No trackers.
       </p>
     </footer>
   );

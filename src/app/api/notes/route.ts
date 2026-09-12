@@ -29,7 +29,10 @@ export async function POST(req: Request) {
     .select()
     .from(notes)
     .where(and(eq(notes.userId, session.user.id), eq(notes.skillId, parsed.data.skillId)));
-  const body = parsed.data.body.replace(/<script/gi, "&lt;script");
+  // Notes are rendered as plain text in a controlled <textarea> (React-escaped).
+  // Do not "sanitize" here: rewriting user text corrupts notes about HTML/JS.
+  // If Markdown rendering ever lands, add a real allowlist sanitizer (docs/SECURITY.md).
+  const body = parsed.data.body;
   if (existing[0]) {
     await db.update(notes).set({ body, updatedAt: now }).where(eq(notes.id, existing[0].id));
   } else {

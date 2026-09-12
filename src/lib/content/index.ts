@@ -16,8 +16,36 @@ import { challenges as rawChallenges } from "./challenges";
 import { practiceExercises as rawPractice } from "./practice";
 import { projects as rawProjects } from "./projects";
 import { resources as rawResources } from "./resources";
+import { importedResources } from "./resources.imported";
 import { roadmaps as rawRoadmaps } from "./roadmaps";
 import { skills as rawSkills } from "./skills";
+import { importedSkills } from "./skills.imported";
+import { importedWiring } from "./skill-wiring";
+
+/**
+ * Dataset wiring is merged into hand-authored skills *before* Zod parsing, so a
+ * dangling reference in generated output fails the build instead of shipping.
+ * Human editorial slots always win; generated slots only fill empty ones.
+ */
+function applyWiring(skill: unknown): unknown {
+  const s = skill as {
+    id: string;
+    resources: { quick?: string; project?: string; docs?: string };
+    extraResourceIds?: string[];
+  };
+  const w = importedWiring[s.id];
+  if (!w) return skill;
+  return {
+    ...s,
+    resources: {
+      ...s.resources,
+      quick: s.resources.quick ?? w.quick,
+      project: s.resources.project ?? w.project,
+      docs: s.resources.docs ?? w.docs,
+    },
+    extraResourceIds: [...(s.extraResourceIds ?? []), ...w.extra],
+  };
+}
 
 function parseAll<T>(name: string, schema: { parse: (v: unknown) => T }, items: unknown[]): T[] {
   return items.map((item, i) => {
@@ -29,8 +57,8 @@ function parseAll<T>(name: string, schema: { parse: (v: unknown) => T }, items: 
   });
 }
 
-export const resources = parseAll("resources", resourceSchema, rawResources);
-export const skills = parseAll("skills", skillSchema, rawSkills);
+export const resources = parseAll("resources", resourceSchema, [...rawResources, ...importedResources]);
+export const skills = parseAll("skills", skillSchema, [...rawSkills, ...importedSkills].map(applyWiring));
 export const roadmaps = parseAll("roadmaps", roadmapSchema, rawRoadmaps);
 export const challenges = parseAll("challenges", challengeSchema, rawChallenges);
 export const projects = parseAll("projects", projectSchema, rawProjects);
@@ -90,6 +118,29 @@ export function validateCatalog(): string[] {
         errors.push(`Roadmap ${roadmap.id} bad edge ${edge.from} -> ${edge.to}`);
       }
     }
+    const staged = new Set<string>();
+    for (const stage of roadmap.stages) {
+      for (const nid of stage.nodeIds) {
+        if (!nodeIds.has(nid)) errors.push(`Roadmap ${roadmap.id} stage ${stage.id} unknown node ${nid}`);
+        if (staged.has(nid)) errors.push(`Roadmap ${roadmap.id} node ${nid} in two stages`);
+        staged.add(nid);
+      }
+    }
+    for (const nid of nodeIds) {
+      if (roadmap.stages.length && !staged.has(nid)) {
+        errors.push(`Roadmap ${roadmap.id} node ${nid} missing from stages`);
+      }
+    }
+  }
+
+  // Imported resources must never ship unverified embeds.
+  for (const resource of resources) {
+    if ((resource.type === "youtube-course" || resource.type === "youtube-video") && !resource.youtubeId) {
+      errors.push(`Resource ${resource.id} is a youtube type without youtubeId`);
+    }
+    if (resource.youtubeId && !resource.url.includes(resource.youtubeId)) {
+      errors.push(`Resource ${resource.id} url does not contain its youtubeId`);
+    }
   }
 
   for (const challenge of challenges) {
@@ -127,6 +178,13 @@ export function resourcesForSkill(skill: Skill): { slot: string; resource: Resou
     if (!resource) continue;
     seen.add(id);
     out.push({ slot, resource });
+  }
+  for (const id of skill.extraResourceIds) {
+    if (seen.has(id)) continue;
+    const resource = resourceById.get(id);
+    if (!resource) continue;
+    seen.add(id);
+    out.push({ slot: "More curated", resource });
   }
   return out;
 }

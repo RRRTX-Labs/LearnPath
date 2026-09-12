@@ -5,55 +5,90 @@
 @source not "../../content";
 @source not "../../tests";
 @source not "../../branding";
+@source not "../../scripts";
+
+/* ============================================================================
+   LearnPath design system v2 — see docs/DESIGN-SYSTEM.md
+   Tokens only. Components must never hardcode hex, radii, or shadow values.
+   ========================================================================== */
 
 :root {
+  /* Light: warm paper and ink */
   --bg: #f6f3ec;
-  --bg-sunken: #ece7dc;
+  --bg-sunken: #ebe6da;
   --surface: #fffcf6;
   --surface-2: #ffffff;
   --fg: #16161d;
-  --muted: #5c6573;
-  --border: rgba(22, 22, 29, 0.1);
+  --muted: #556070;
+  --line: rgba(22, 22, 29, 0.12);
+  --line-strong: rgba(22, 22, 29, 0.2);
   --primary: #0f766e;
   --primary-fg: #f4fffd;
+  --primary-soft: rgba(15, 118, 110, 0.1);
   --accent: #b45309;
+  --accent-soft: rgba(180, 83, 9, 0.12);
   --danger: #b42318;
   --warning: #a16207;
   --success: #047857;
   --info: #1d4ed8;
   --ring: #0f766e;
-  --grid: rgba(22, 22, 29, 0.06);
-  --path: #0f766e;
-  --glow: rgba(15, 118, 110, 0.18);
-  --shadow: 0 8px 30px rgba(22, 22, 29, 0.08);
+  --grid: rgba(22, 22, 29, 0.055);
+  --glow: rgba(15, 118, 110, 0.16);
+  --glass: rgba(255, 252, 246, 0.72);
+  --glass-line: rgba(22, 22, 29, 0.1);
+
+  --shadow-1: 0 1px 2px rgba(22, 22, 29, 0.05), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  --shadow-2: 0 4px 14px rgba(22, 22, 29, 0.08), 0 1px 3px rgba(22, 22, 29, 0.06);
+  --shadow-3: 0 16px 40px rgba(22, 22, 29, 0.12), 0 3px 10px rgba(22, 22, 29, 0.07);
+  --shadow-glow: 0 0 0 1px var(--glow), 0 8px 28px var(--glow);
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
   --font-display: var(--font-instrument);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Motion scale — the only durations components may use */
+  --dur-instant: 0ms;
+  --dur-fast: 150ms;
+  --dur-normal: 250ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dark {
+  /* Dark (default): the night sky */
   --bg: #090a0c;
   --bg-sunken: #050506;
   --surface: #12151c;
   --surface-2: #191d27;
   --fg: #f4f1ea;
   --muted: #9aa3b2;
-  --border: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
   --primary: #2dd4bf;
   --primary-fg: #042f2e;
+  --primary-soft: rgba(45, 212, 191, 0.12);
   --accent: #f5b942;
+  --accent-soft: rgba(245, 185, 66, 0.14);
   --danger: #f07167;
   --warning: #e3b341;
   --success: #3ddc97;
   --info: #7aa2ff;
   --ring: #2dd4bf;
   --grid: rgba(255, 255, 255, 0.035);
-  --path: #2dd4bf;
   --glow: rgba(45, 212, 191, 0.16);
-  --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  --glass: rgba(18, 21, 28, 0.62);
+  --glass-line: rgba(255, 255, 255, 0.12);
+
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --shadow-3: 0 22px 54px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  --shadow-glow: 0 0 0 1px var(--glow), 0 10px 34px var(--glow);
 }
 
 @theme inline {
@@ -63,18 +98,33 @@
   --color-surface-2: var(--surface-2);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-primary: var(--primary);
   --color-primary-fg: var(--primary-fg);
+  --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
   --color-success: var(--success);
   --color-info: var(--info);
   --color-ring: var(--ring);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-1: var(--shadow-1);
+  --shadow-2: var(--shadow-2);
+  --shadow-3: var(--shadow-3);
+  --shadow-glow: var(--shadow-glow);
 }
 
 html {
@@ -101,17 +151,21 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--primary) 40%, transparent);
+  background: color-mix(in srgb, var(--primary) 35%, transparent);
   color: var(--fg);
 }
 
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
+  border-radius: 4px;
 }
+
+/* ---------------------------------------------------------------- type ---- */
 
 .font-display {
   font-family: var(--font-display), ui-serif, Georgia, serif;
+  letter-spacing: -0.015em;
 }
 
 .eyebrow {
@@ -122,64 +176,12 @@ body {
   color: var(--muted);
 }
 
-.surface {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-}
-
-.link-plain {
-  color: var(--primary);
-  text-underline-offset: 3px;
-}
-.link-plain:hover {
-  text-decoration: underline;
-}
-
-.skip-link {
-  position: absolute;
-  left: 12px;
-  top: -40px;
-  z-index: 80;
-  background: var(--primary);
-  color: var(--primary-fg);
-  padding: 8px 12px;
-  border-radius: 8px;
-}
-.skip-link:focus {
-  top: 12px;
-}
-
-@keyframes draw-path {
-  from {
-    stroke-dashoffset: 240;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes pulse-node {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.animate-draw {
-  stroke-dasharray: 240;
-  animation: draw-path 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-draw,
-  .animate-pulse-node {
-    animation: none !important;
-  }
+.meta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .prose-lp {
@@ -196,4 +198,210 @@ body {
 }
 .prose-lp a:hover {
   text-decoration: underline;
+}
+
+.link-plain {
+  color: var(--primary);
+  text-underline-offset: 3px;
+}
+.link-plain:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------ surfaces ---- */
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+/* Restrained glass: navigation, hero overlays, floating controls, selected
+   cards. Never for body content. */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow-2);
+}
+
+.sunken {
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+/* --------------------------------------------------------- interaction ---- */
+
+/* Cards lift 2px, never more. Border highlight + one shadow step. */
+.card-hover {
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-normal) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-2);
+}
+.card-hover:active {
+  transform: translateY(0);
+}
+
+/* Cursor-aware spotlight. --mx/--my are set by <Spotlight>; defaults keep the
+   effect invisible until the pointer arrives. */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--dur-normal) var(--ease-out);
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    var(--glow),
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+.spotlight:hover::before,
+.spotlight:focus-within::before {
+  opacity: 1;
+}
+
+/* Gradient hairline along the top edge of featured surfaces */
+.edge-accent {
+  position: relative;
+}
+.edge-accent::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------ a11y/ui ---- */
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 80;
+  background: var(--primary);
+  color: var(--primary-fg);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ------------------------------------------------------------- motion ---- */
+
+@keyframes lp-draw-path {
+  from {
+    stroke-dashoffset: var(--draw-length, 240);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lp-pulse-node {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes lp-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+@keyframes lp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lp-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: var(--draw-length, 240);
+  animation: lp-draw-path 1.6s var(--ease-out) forwards;
+}
+.animate-pulse-node {
+  animation: lp-pulse-node 3.2s ease-in-out infinite;
+}
+.animate-fade-up {
+  animation: lp-fade-up var(--dur-slow) var(--ease-out) both;
+}
+.animate-float {
+  animation: lp-float 7s ease-in-out infinite;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    color-mix(in srgb, var(--surface-2) 60%, var(--fg) 6%) 50%,
+    var(--surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: lp-shimmer 1.4s linear infinite;
+}
+
+/* The reduced-motion contract: everything decorative collapses to opacity. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-draw,
+  .animate-pulse-node,
+  .animate-fade-up,
+  .animate-float,
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+  .card-hover,
+  .card-hover:hover,
+  .spotlight::before {
+    transform: none !important;
+    transition: none !important;
+  }
+  .spotlight::before {
+    opacity: 0 !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

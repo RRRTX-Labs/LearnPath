@@ -16,7 +16,7 @@ This is not YouTube, Coursera, Udemy, a certificate mill, or an AI course genera
 - Better Auth (Google, GitHub, Discord, email)
 - Turso / libSQL + Drizzle ORM
 - Git-canonical curriculum (Zod-validated)
-- Monaco + Pyodide + sql.js + sandboxed JS/HTML (browser only)
+- Monaco (lazy client chunk) + Pyodide + sql.js + sandboxed JS/HTML (browser only)
 
 ## Local setup
 
@@ -39,6 +39,7 @@ OAuth buttons appear only when the corresponding client IDs are set. Email/passw
 | `npm run build` | Production build |
 | `npm run test` | Unit tests |
 | `npm run content:validate` | Curriculum integrity |
+| `node scripts/import-resources.mjs` | Regenerate catalog from research dataset |
 | `npm run db:push` | Push Drizzle schema |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |

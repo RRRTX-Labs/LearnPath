@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import type { Challenge } from "@/lib/content";
 import { Button } from "../ui";
-import { MonacoField } from "./monaco-field";
+import { EditorField } from "./editor-field";
 import { runCode, runPython, runSql, type RunResult } from "./runtimes";
 
 function Output({ result }: { result: RunResult | null }) {
@@ -81,7 +81,7 @@ export function PracticeWorkspace({
   return (
     <div className="grid gap-4">
       {prompt ? <p className="text-sm text-muted">{prompt}</p> : null}
-      <MonacoField language={language} value={code} onChange={setCode} />
+      <EditorField language={language} value={code} onChange={setCode} />
       <div className="flex flex-wrap gap-2">
         <Button onClick={run} disabled={busy}>
           {busy ? "Running…" : "Run"}
@@ -192,7 +192,7 @@ export function ChallengeWorkspace({
       <div className="prose-lp text-sm">
         <p>{challenge.prompt}</p>
       </div>
-      <MonacoField language={challenge.language} value={code} onChange={setCode} />
+      <EditorField language={challenge.language} value={code} onChange={setCode} />
       <div className="flex flex-wrap gap-2">
         <Button onClick={runTests} disabled={busy}>
           {busy ? "Running tests…" : "Run tests"}

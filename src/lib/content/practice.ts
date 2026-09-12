@@ -53,7 +53,50 @@ export const practiceExercises = [
     title: "Array transforms",
     language: "javascript",
     prompt: "Use map/filter/reduce. The last expression is shown as Result.",
-    starter: `const nums = [1, 2, 3, 4, 5];
+    starter: `const nums = [1, 2, 3, 4, 5  {
+    id: "js-arrays",
+    title: "Arrays & reducers",
+    language: "javascript",
+    prompt: "Sum the even numbers in an array with reduce. Log the result.",
+    starter: "const nums = [3, 8, 1, 6, 4, 9];\nconst evens = nums.filter((n) => n % 2 === 0);\nconst total = evens.reduce((a, b) => a + b, 0);\nconsole.log('evens', evens, 'total', total);\n",
+  },
+  {
+    id: "js-objects",
+    title: "Group by",
+    language: "javascript",
+    prompt: "Group these learners by track using an object. Log each track's count.",
+    starter: "const learners = [\n  { name: 'Ada', track: 'ai' },\n  { name: 'Linus', track: 'web' },\n  { name: 'Grace', track: 'ai' },\n];\nconst byTrack = {};\nfor (const l of learners) {\n  byTrack[l.track] = (byTrack[l.track] ?? 0) + 1;\n}\nconsole.log(byTrack);\n",
+  },
+  {
+    id: "ts-generics",
+    title: "Typed wrappers",
+    language: "typescript",
+    prompt: "Write a generic first<T>(items: T[]): T | undefined and use it with numbers and strings.",
+    starter: "function first<T>(items: T[]): T | undefined {\n  return items[0];\n}\n\nconsole.log(first([1, 2, 3]), first(['a', 'b']));\n",
+  },
+  {
+    id: "html-semantics",
+    title: "Semantic card",
+    language: "html",
+    prompt: "Mark up a small article: header, heading, paragraph, footer. Watch the live preview.",
+    starter: "<article>\n  <header><h1>Title</h1></header>\n  <p>Body copy.</p>\n  <footer>Footer</footer>\n</article>\n",
+  },
+  {
+    id: "sql-joins",
+    title: "Join two tables",
+    language: "sql",
+    prompt: "List every book with its author's name using a join.",
+    starter: "SELECT books.title, authors.name\nFROM books\nJOIN authors ON authors.id = books.author_id;\n",
+  },
+  {
+    id: "sql-aggregates",
+    title: "Group and count",
+    language: "sql",
+    prompt: "Count loans per borrower, ordered by count descending.",
+    starter: "SELECT borrower, COUNT(*) AS loans\nFROM loans\nGROUP BY borrower\nORDER BY loans DESC;\n",
+  },
+];
+
 const doubled = nums.map((n) => n * 2);
 const evens = doubled.filter((n) => n % 2 === 0);
 const sum = evens.reduce((a, b) => a + b, 0);

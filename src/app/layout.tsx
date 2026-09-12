@@ -20,19 +20,44 @@ export const metadata: Metadata = {
   metadataBase: new URL(site),
   title: { default: `${APP_NAME} — ${APP_TAGLINE}`, template: `%s · ${APP_NAME}` },
   description: APP_DESCRIPTION,
+  alternates: { canonical: "/" },
   openGraph: {
     title: APP_NAME,
     description: APP_DESCRIPTION,
     images: ["/og.png"],
     type: "website",
+    siteName: APP_NAME,
   },
   twitter: { card: "summary_large_image", title: APP_NAME, description: APP_DESCRIPTION, images: ["/og.png"] },
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, { url: "/favicon.ico", sizes: "48x48" }],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: APP_NAME,
+  description: APP_DESCRIPTION,
+  url: site,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${site}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable} h-full`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${instrument.variable} h-full`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </head>
       <body className="flex min-h-full flex-col antialiased">
         <Providers>
           <a href="#content" className="skip-link">
