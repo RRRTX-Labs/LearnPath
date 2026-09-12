@@ -2,6 +2,7 @@ import { GitPullRequest, Heart, Scale } from "lucide-react";
 import type { Metadata } from "next";
 import { ButtonLink, Container } from "@/components/ui";
 import { GitHubIcon } from "@/components/github-icon";
+import { envOr } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "Open source",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     "LearnPath is MIT-licensed software with an independently authored, Git-canonical curriculum. Improve roadmaps, suggest resources, report broken links, contribute code.",
 };
 
-const github = process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/RRRTX-Labs/LearnPath";
+const github = envOr("https://github.com/RRRTX-Labs/LearnPath", process.env.NEXT_PUBLIC_GITHUB_URL);
 
 export default function OpenSourcePage() {
   return (

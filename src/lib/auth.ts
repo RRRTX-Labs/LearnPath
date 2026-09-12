@@ -4,7 +4,8 @@ import { nextCookies } from "better-auth/next-js";
 import { anonymous } from "better-auth/plugins/anonymous";
 import { getDb } from "@/db";
 import * as schema from "@/db/schema";
-import { firstNonEmptyEnv, getSiteUrl } from "./site-url";
+import { envOr, firstNonEmptyEnv } from "./env";
+import { getSiteUrl } from "./site-url";
 import { enabledProviders } from "./auth-providers";
 
 const googleId = process.env.GOOGLE_CLIENT_ID;
@@ -19,7 +20,7 @@ export { enabledProviders };
 export const auth = betterAuth({
   appName: "LearnPath",
   baseURL: firstNonEmptyEnv(process.env.BETTER_AUTH_URL) ?? getSiteUrl(),
-  secret: process.env.BETTER_AUTH_SECRET ?? "learnpath-dev-secret-change-me-32chars!",
+  secret: envOr("learnpath-dev-secret-change-me-32chars!", process.env.BETTER_AUTH_SECRET),
   database: drizzleAdapter(getDb(), {
     provider: "sqlite",
     schema,

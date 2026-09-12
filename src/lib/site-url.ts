@@ -35,10 +35,4 @@ export function getSiteUrl(): string {
 }
 
 /** First non-empty env value, trimmed; undefined if none is usable. */
-export function firstNonEmptyEnv(...values: (string | undefined)[]): string | undefined {
-  for (const value of values) {
-    const trimmed = value?.trim();
-    if (trimmed) return trimmed;
-  }
-  return undefined;
-}
+export { firstNonEmptyEnv } from "./env";

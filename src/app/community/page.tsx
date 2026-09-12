@@ -1,6 +1,7 @@
 import { MessagesSquare, Users } from "lucide-react";
 import type { Metadata } from "next";
 import { ButtonLink, Container } from "@/components/ui";
+import { firstNonEmptyEnv } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
     "LearnPath's community lives on Discord: ask questions, share projects, find study partners and discuss roadmaps.",
 };
 
-const invite = process.env.NEXT_PUBLIC_DISCORD_INVITE;
+const invite = firstNonEmptyEnv(process.env.NEXT_PUBLIC_DISCORD_INVITE);
 
 export default function CommunityPage() {
   return (

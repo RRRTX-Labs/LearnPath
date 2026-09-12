@@ -2,9 +2,10 @@ import { MessagesSquare } from "lucide-react";
 import Link from "next/link";
 import { GitHubIcon } from "./github-icon";
 import { Mark } from "./logo";
+import { envOr, firstNonEmptyEnv } from "@/lib/env";
 
-const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/RRRTX-Labs/LearnPath";
-const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE;
+const GITHUB_URL = envOr("https://github.com/RRRTX-Labs/LearnPath", process.env.NEXT_PUBLIC_GITHUB_URL);
+const DISCORD_INVITE = firstNonEmptyEnv(process.env.NEXT_PUBLIC_DISCORD_INVITE);
 
 export function SiteFooter() {
   return (

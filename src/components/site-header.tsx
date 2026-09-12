@@ -10,6 +10,7 @@ import { GitHubIcon } from "./github-icon";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { ButtonLink } from "./ui";
+import { envOr } from "@/lib/env";
 
 const NAV = [
   { href: "/roadmaps", label: "Roadmaps" },
@@ -19,7 +20,7 @@ const NAV = [
   { href: "/community", label: "Community" },
 ];
 
-const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/RRRTX-Labs/LearnPath";
+const GITHUB_URL = envOr("https://github.com/RRRTX-Labs/LearnPath", process.env.NEXT_PUBLIC_GITHUB_URL);
 
 export function SiteHeader() {
   const pathname = usePathname();
