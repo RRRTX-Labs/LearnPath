@@ -36,6 +36,7 @@ export default async function LearnPage({ params }: Props) {
       </p>
       <LearnClient
         roadmapSlug={roadmap.slug}
+        roadmapTitle={roadmap.title}
         skill={skill}
         nodes={roadmap.nodes.map((n) => ({
           id: n.id,

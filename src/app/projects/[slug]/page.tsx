@@ -18,7 +18,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProjectPage({ params }: Props) {
   const project = projectBySlug.get((await params).slug);
   if (!project) notFound();
-  const starter = Object.entries(project.starter)[0];
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
       <p className="eyebrow">
@@ -35,7 +34,7 @@ export default async function ProjectPage({ params }: Props) {
       <p className="mt-4 text-sm text-muted">
         Skills: {project.skillIds.map((id) => skillById.get(id)?.title ?? id).join(" · ")}
       </p>
-      <ProjectView project={project} starterFile={starter?.[0] ?? "main"} starterCode={starter?.[1] ?? ""} />
+      <ProjectView project={project} />
     </div>
   );
 }

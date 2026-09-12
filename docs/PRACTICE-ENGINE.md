@@ -22,7 +22,11 @@ Public Piston is no longer free-for-all (2026). Self-hosting needs privileged Do
 
 ## Editor
 
-V1 ships a first-class monospace editor (tab insertion, language label) rather than bundling Monaco in this repository. Monaco remains the intended upgrade (`@monaco-editor/react` + CDN workers) once the deploy environment has the RAM for the extra compile. Keyboard: tab inserts spaces.
+Monaco (`@monaco-editor/react`) ships as a **lazy client chunk**: `EditorField` imports
+`monaco-field` in an effect, shows a shimmer while the chunk/CDN loads, and falls back to a fully
+functional monospace textarea (tab inserts spaces) if the load fails. Monaco is never server
+rendered and never loaded on marketing pages. Keyboard: standard Monaco bindings; the fallback
+handles Tab itself.
 
 ## Protocol
 
