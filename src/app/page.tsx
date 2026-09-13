@@ -2,17 +2,15 @@ import {
   ArrowRight,
   Code2,
   GitPullRequest,
-  Hammer,
-  Map as MapIcon,
   MessagesSquare,
   Play,
-  Terminal,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContinueLearning } from "@/components/continue-learning";
 import { PathCanvas } from "@/components/path-canvas";
 import { ResourceRail } from "@/components/resource-rail";
+import { LoopNodes } from "@/components/loop-nodes";
 import { RoadmapCard } from "@/components/roadmap-card";
 import { SearchBox } from "@/components/search-box";
 import { Badge, ButtonLink, Container, SectionHeader } from "@/components/ui";
@@ -132,33 +130,7 @@ export default function HomePage() {
       <section className="border-y border-line bg-surface/40 py-14">
         <Container>
           <SectionHeader eyebrow="How LearnPath works" title="One loop, repeated until it sticks" />
-          <ol className="mt-10 grid gap-4 md:grid-cols-4">
-            {[
-              { icon: MapIcon, t: "Roadmap", d: "Staged graphs with prerequisites, so you always know what comes next and why." },
-              { icon: Play, t: "Learn", d: "Editorially verified free resources — official YouTube embeds, never rehosted." },
-              { icon: Terminal, t: "Practice", d: "Python, JS, TS, SQL and HTML run in your browser. Your code never touches our servers." },
-              { icon: Hammer, t: "Build", d: "Challenges with real tests, then project briefs you can put in a portfolio." },
-            ].map((s, i) => (
-              <li key={s.t} className="relative">
-                <div className="surface card-hover h-full rounded-lg p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="grid h-10 w-10 place-items-center rounded-md bg-primary-soft text-primary">
-                      <s.icon className="h-5 w-5" aria-hidden />
-                    </span>
-                    <span className="meta">0{i + 1}</span>
-                  </div>
-                  <p className="mt-4 font-medium">{s.t}</p>
-                  <p className="mt-1 text-sm text-muted">{s.d}</p>
-                </div>
-                {i < 3 ? (
-                  <ArrowRight
-                    className="absolute -right-3 top-1/2 z-10 hidden h-4 w-4 -translate-y-1/2 text-muted md:block"
-                    aria-hidden
-                  />
-                ) : null}
-              </li>
-            ))}
-          </ol>
+          <LoopNodes />
         </Container>
       </section>
 

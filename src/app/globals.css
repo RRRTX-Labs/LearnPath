@@ -383,6 +383,47 @@ body {
   animation: lp-shimmer 1.4s linear infinite;
 }
 
+/* ------------------------------------------- loop graph (how it works) */
+.loop-line,
+.loop-line-v {
+  transform: scale(0);
+  transition: transform 1.2s var(--ease-out) 0.2s;
+}
+.loop-line { transform-origin: left center; }
+.loop-line-v { transform-origin: top center; }
+.loop-graph[data-visible="true"] .loop-line,
+.loop-graph[data-visible="true"] .loop-line-v {
+  transform: scale(1);
+}
+.loop-node {
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    opacity 0.5s ease var(--d, 0ms),
+    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d, 0ms);
+}
+.loop-graph[data-visible="true"] .loop-node {
+  opacity: 1;
+  transform: scale(1);
+}
+/* keep the md centering translate while animating scale */
+@media (min-width: 768px) {
+  .loop-node { transform: translateX(-50%) scale(0.4); }
+  .loop-graph[data-visible="true"] .loop-node { transform: translateX(-50%) scale(1); }
+}
+.loop-traveler {
+  left: 0;
+  animation: lp-travel 7s linear 1.6s infinite;
+  opacity: 0;
+}
+@keyframes lp-travel {
+  0% { left: 0%; opacity: 0; }
+  6% { opacity: 0.9; }
+  46% { left: 100%; opacity: 0.9; }
+  50% { left: 100%; opacity: 0; }
+  100% { left: 100%; opacity: 0; }
+}
+
 /* ---------------------------------------------- footer brand wordmark */
 .wordmark {
   font-family: var(--font-display);
@@ -412,8 +453,25 @@ body {
   .animate-fade-up,
   .animate-float,
   .skeleton-shimmer,
-  .wordmark {
+  .wordmark,
+  .loop-traveler,
+  .animate-pulse-node {
     animation: none !important;
+  }
+  .loop-line,
+  .loop-line-v {
+    transform: scale(1) !important;
+    transition: none !important;
+  }
+  .loop-node {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    transition: none !important;
+  }
+  @media (min-width: 768px) {
+    .loop-node {
+      transform: translateX(-50%) scale(1) !important;
+    }
   }
   .card-hover,
   .card-hover:hover,
