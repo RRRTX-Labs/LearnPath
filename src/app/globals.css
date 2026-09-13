@@ -383,13 +383,36 @@ body {
   animation: lp-shimmer 1.4s linear infinite;
 }
 
+/* ---------------------------------------------- footer brand wordmark */
+.wordmark {
+  font-family: var(--font-display);
+  letter-spacing: 0.22em;
+  background: linear-gradient(
+    100deg,
+    var(--color-fg) 0%,
+    color-mix(in oklab, var(--color-fg) 55%, var(--color-primary)) 45%,
+    var(--color-primary) 60%,
+    color-mix(in oklab, var(--color-fg) 60%, transparent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px color-mix(in oklab, var(--color-primary) 22%, transparent));
+  animation: lp-wordmark 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes lp-wordmark {
+  from { letter-spacing: 0.34em; opacity: 0; }
+  to { letter-spacing: 0.22em; opacity: 1; }
+}
+
 /* The reduced-motion contract: everything decorative collapses to opacity. */
 @media (prefers-reduced-motion: reduce) {
   .animate-draw,
   .animate-pulse-node,
   .animate-fade-up,
   .animate-float,
-  .skeleton-shimmer {
+  .skeleton-shimmer,
+  .wordmark {
     animation: none !important;
   }
   .card-hover,

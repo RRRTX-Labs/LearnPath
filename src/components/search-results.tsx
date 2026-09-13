@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Hammer, Map as MapIcon, Search, Terminal, Waves } from "lucide-react";
+import { BookOpen, Hammer, Map as MapIcon, Search, Terminal, Waves , Newspaper } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import type { SearchHit } from "@/lib/search";
@@ -13,6 +13,7 @@ const KIND_META = {
   resource: { icon: BookOpen, label: "Resources" },
   challenge: { icon: Terminal, label: "Challenges" },
   project: { icon: Hammer, label: "Projects" },
+  blog: { icon: Newspaper, label: "Journal" },
 } as const;
 
 /**

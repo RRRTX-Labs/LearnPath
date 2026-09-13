@@ -1,4 +1,4 @@
-export type EntityType = "roadmap" | "skill" | "resource" | "challenge" | "project";
+export type EntityType = "roadmap" | "skill" | "resource" | "challenge" | "project" | "practice";
 export type ProgressStatus = "started" | "completed";
 
 export type ProgressRecord = {

@@ -1,3 +1,40 @@
+## [Unreleased] — V2 Wave 1
+
+### Added
+- **The LearnPath Journal** (`/blog`, `/blog/[slug]`): TS-canonical blog system with Zod
+  schema, SSG pages, Article JSON-LD, prev/next, related skills/roadmaps, sitemap +
+  search integration, and four researched pilot essays (AI coding agents, security for
+  AI apps, TypeScript vs Python 2026, learning with AI) with original brand cover art
+  (`scripts/render-blog-covers.py`). Authoring guide: `docs/BLOG-AUTHORING.md`.
+- **Proof of skill foundation** (`src/lib/proof.ts`): honest evidence model
+  (learned / practiced / challenge passed / applied → SKILL DEMONSTRATED, states
+  NOT STARTED → LEARNING → PROVEN → APPLIED). New `practice` progress entity recorded
+  on successful sandbox runs. Surfaces on the learning page (loop strip + evidence
+  panel) and the dashboard (Evidence section).
+- **Dashboard upgrade** (`/me`): dominant Continue card (roadmap · stage · skill · %),
+  Today plan (next lessons + practice + challenge), roadmap progress, evidence summary,
+  recent notes, recent activity.
+- **Learning loop on skill pages**: stage context line, prerequisites warning,
+  LEARN → PRACTICE → CHALLENGE → PROVE strip with live states, challenge links with
+  pass status, project application links, "completing this unlocks…".
+- **RRRTX Labs presence**: `/about` page (product, open-source and learning philosophy,
+  studio), footer brand moment (LEARNPATH wordmark, "Built by RRRTX Labs"), journal +
+  about links in header/footer, homepage journal teaser.
+- **Resource quality system**: transparent editorial `review` dimensions
+  (clarity/hands-on/freshness/projects/beginner, 1–5) with star badges on resource
+  pages; numeric `editorScore` retained for sorting only, removed from display.
+- **Homepage picks rail**: accessible horizontal scroll-snap carousel with real
+  prev/next buttons; hero now states the loop (choose → learn → practice → prove → build).
+- Docs: `docs/AUTH-SETUP.md`, `docs/DISCORD-SETUP.md` (server guide + OAuth vs server
+  vs bot), `docs/V2-AUDIT-AND-PLAN.md`.
+
+### Changed
+- Search now indexes journal posts (`blog` result type); sitemap includes `/blog/*`.
+- SectionHeader accepts an optional `sub` description line.
+
+### Fixed
+- (none this wave; v1 fixes remain in 1.0.0 entries)
+
 # Changelog
 
 ## 1.0.0 — 2026-09-13

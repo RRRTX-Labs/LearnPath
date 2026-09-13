@@ -117,3 +117,35 @@ export function ResourceCard({
     </Link>
   );
 }
+
+/** Transparent editorial review — five honest dimensions instead of a fake score. */
+export function ReviewStars({
+  review,
+  className = "",
+}: {
+  review: { clarity: number; handsOn: number; freshness: number; projects: number; beginner: number };
+  className?: string;
+}) {
+  const rows: [string, number][] = [
+    ["Clarity", review.clarity],
+    ["Hands-on", review.handsOn],
+    ["Freshness", review.freshness],
+    ["Projects", review.projects],
+    ["Beginner-friendly", review.beginner],
+  ];
+  return (
+    <dl className={`grid grid-cols-1 gap-x-8 gap-y-1.5 sm:grid-cols-2 ${className}`}>
+      {rows.map(([label, value]) => (
+        <div key={label} className="flex items-center justify-between gap-3 text-sm">
+          <dt className="text-muted">{label}</dt>
+          <dd aria-label={`${label}: ${value} out of 5`}>
+            <span aria-hidden className="tracking-[0.15em] text-primary">
+              {"★".repeat(value)}
+              <span className="text-muted/50">{"★".repeat(5 - value)}</span>
+            </span>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}

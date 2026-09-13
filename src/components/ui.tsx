@@ -269,11 +269,13 @@ export function TabPanel({ id, active, children, label }: { id: string; active: 
 export function SectionHeader({
   eyebrow,
   title,
+  sub,
   action,
   className,
 }: {
   eyebrow: string;
   title: string;
+  sub?: string;
   action?: React.ReactNode;
   className?: string;
 }) {
@@ -282,6 +284,7 @@ export function SectionHeader({
       <div>
         <p className="eyebrow">{eyebrow}</p>
         <h2 className="mt-2 font-display text-3xl leading-tight md:text-4xl">{title}</h2>
+        {sub ? <p className="mt-3 max-w-2xl text-sm text-muted">{sub}</p> : null}
       </div>
       {action}
     </div>

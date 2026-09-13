@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { challenges, projects, resources, roadmaps, skills } from "@/lib/content";
+import { blogPosts, challenges, projects, resources, roadmaps, skills } from "@/lib/content";
 import { getSiteUrl } from "@/lib/site-url";
 
 /**
@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ),
     ...challenges.map((c) => entry(`${base}/challenges/${c.slug}`, "monthly", 0.5)),
     ...projects.map((p) => entry(`${base}/projects/${p.slug}`, "monthly", 0.5)),
+    ...blogPosts.map((b) => entry(`${base}/blog/${b.slug}`, "weekly", 0.7)),
   ];
   return urls;
 }

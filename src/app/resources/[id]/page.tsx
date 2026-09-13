@@ -1,3 +1,4 @@
+import { ReviewStars } from "@/components/resource-card";
 import { AlertTriangle, CalendarDays, CheckCircle2, Clock, ExternalLink, Languages } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -87,15 +88,11 @@ export default async function ResourcePage({ params }: Props) {
               Why LearnPath recommends it
             </h2>
             <p className="mt-3 leading-relaxed">{resource.editorNote}</p>
-            <div className="mt-4 flex items-center gap-3">
-              <div className="h-1.5 flex-1 overflow-hidden rounded-pill bg-bg-sunken">
-                <div className="h-full rounded-pill bg-primary" style={{ width: `${resource.editorScore}%` }} />
-              </div>
-              <p className="meta shrink-0">
-                LearnPath score <span className="text-fg">{resource.editorScore}</span>/100 · verified{" "}
-                {resource.lastVerified}
-              </p>
-            </div>
+            {resource.review ? <ReviewStars review={resource.review} className="mt-4" /> : null}
+            <p className="meta mt-3">
+              Editorial review dimensions (1–5), assigned by LearnPath editors — not a computed
+              score. Last reviewed {resource.lastVerified}.
+            </p>
           </section>
 
           {resource.learningOutcomes.length ? (
@@ -197,7 +194,7 @@ export default async function ResourcePage({ params }: Props) {
                           <span className="block font-medium transition-colors group-hover:text-primary">
                             {r.title}
                           </span>
-                          <span className="meta">{r.provider} · score {r.editorScore}</span>
+                          <span className="meta">{r.provider} · {r.type}</span>
                         </Link>
                       </li>
                     );

@@ -12,11 +12,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContinueLearning } from "@/components/continue-learning";
 import { PathCanvas } from "@/components/path-canvas";
-import { ResourceCard } from "@/components/resource-card";
+import { ResourceRail } from "@/components/resource-rail";
 import { RoadmapCard } from "@/components/roadmap-card";
 import { SearchBox } from "@/components/search-box";
 import { Badge, ButtonLink, Container, SectionHeader } from "@/components/ui";
-import { projects, resources, roadmaps, skills } from "@/lib/content";
+import { blogPosts, projects, resources, roadmaps, skills } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Learn anything. Build everything.",
@@ -30,6 +30,8 @@ const CATEGORY_OF_TOPIC: Record<string, string[]> = {
   web: ["web-development", "javascript-typescript", "frontend-development", "backend-development", "databases"],
   security: ["cybersecurity"],
 };
+
+const latestPosts = [...blogPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 2);
 
 export default function HomePage() {
   const featured = roadmaps.filter((r) => r.featured);
@@ -89,6 +91,11 @@ export default function HomePage() {
             <p className="meta mt-6">
               {roadmaps.length} roadmaps · {skills.length} skills · {resources.length} verified free
               resources · {projects.length} project briefs
+            </p>
+            <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-muted" aria-label="The LearnPath loop">
+              Choose a path <span className="text-primary">→</span> learn{" "}
+              <span className="text-primary">→</span> practice <span className="text-primary">→</span>{" "}
+              prove <span className="text-primary">→</span> build
             </p>
           </div>
           <div className="animate-fade-up lg:pt-6" style={{ animationDelay: "120ms" }}>
@@ -171,11 +178,7 @@ export default function HomePage() {
             Scores are LearnPath editorial opinions — clarity, cost, freshness and project density —
             documented per resource. Every embed is checked for availability and embedding permission.
           </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {picks.map((r) => (
-              <ResourceCard key={r.id} resource={r} />
-            ))}
-          </div>
+          <ResourceRail picks={picks} />
         </Container>
       </section>
 
@@ -318,6 +321,42 @@ print(learnpath("python-syntax"))
               About the community
             </ButtonLink>
           </div>
+        </Container>
+      </section>
+
+      {/* ------------------------------------------------------- journal */}
+      <section className="border-t border-line bg-surface/40 py-14">
+        <Container>
+          <SectionHeader
+            eyebrow="The LearnPath Journal"
+            title="Field notes from the studio"
+            action={
+              <Link href="/blog" className="flex items-center gap-1 text-sm text-primary hover:underline">
+                All articles <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              </Link>
+            }
+          />
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {latestPosts.map((post) => (
+              <Link key={post.id} href={`/blog/${post.slug}`} className="surface card-hover flex gap-4 rounded-lg p-4">
+                <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-md">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={post.cover} alt="" className="h-full w-full object-cover" loading="lazy" />
+                </div>
+                <div className="min-w-0">
+                  <p className="meta">{post.readingMinutes} min read</p>
+                  <h3 className="mt-1 font-display text-lg leading-snug">{post.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-muted">{post.excerpt}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <p className="meta mt-6">
+            Built by RRRTX Labs — an independent software studio.{" "}
+            <Link className="text-primary hover:underline" href="/about">
+              About the studio & the product
+            </Link>
+          </p>
         </Container>
       </section>
     </div>

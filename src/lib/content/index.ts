@@ -1,10 +1,14 @@
 import {
+  blogPostSchema,
   challengeSchema,
   practiceExerciseSchema,
   projectSchema,
   resourceSchema,
   roadmapSchema,
   skillSchema,
+  type BlogBlock,
+  type BlogCategory,
+  type BlogPost,
   type Challenge,
   type PracticeExercise,
   type Project,
@@ -12,6 +16,7 @@ import {
   type Roadmap,
   type Skill,
 } from "./schema";
+import { blogPosts as rawBlogPosts } from "./blog";
 import { challenges as rawChallenges } from "./challenges";
 import { practiceExercises as rawPractice } from "./practice";
 import { projects as rawProjects } from "./projects";
@@ -63,6 +68,7 @@ export const roadmaps = parseAll("roadmaps", roadmapSchema, rawRoadmaps);
 export const challenges = parseAll("challenges", challengeSchema, rawChallenges);
 export const projects = parseAll("projects", projectSchema, rawProjects);
 export const practiceExercises = parseAll("practice", practiceExerciseSchema, rawPractice);
+export const blogPosts = parseAll("blog", blogPostSchema, rawBlogPosts);
 
 export const resourceById = new Map(resources.map((r) => [r.id, r]));
 export const skillById = new Map(skills.map((s) => [s.id, s]));
@@ -72,7 +78,11 @@ export const challengeById = new Map(challenges.map((c) => [c.id, c]));
 export const challengeBySlug = new Map(challenges.map((c) => [c.slug, c]));
 export const projectById = new Map(projects.map((p) => [p.id, p]));
 export const projectBySlug = new Map(projects.map((p) => [p.slug, p]));
+export { blogCategoryCopy } from "./schema";
+
 export const practiceById = new Map(practiceExercises.map((p) => [p.id, p]));
+export const blogPostById = new Map(blogPosts.map((p) => [p.id, p]));
+export const blogPostBySlug = new Map(blogPosts.map((p) => [p.slug, p]));
 
 export function validateCatalog(): string[] {
   const errors: string[] = [];
@@ -88,6 +98,20 @@ export function validateCatalog(): string[] {
   ids(roadmaps);
   ids(challenges);
   ids(projects);
+  ids(blogPosts);
+  {
+    const seenSlugs = new Set<string>();
+    for (const post of blogPosts) {
+      if (seenSlugs.has(post.slug)) errors.push(`Duplicate blog slug ${post.slug}`);
+      seenSlugs.add(post.slug);
+      for (const id of post.relatedSkillIds) {
+        if (!skillById.has(id)) errors.push(`Blog ${post.id} missing related skill ${id}`);
+      }
+      for (const id of post.relatedRoadmapIds) {
+        if (!roadmaps.some((r) => r.id === id)) errors.push(`Blog ${post.id} missing related roadmap ${id}`);
+      }
+    }
+  }
 
   for (const skill of skills) {
     for (const key of ["best", "alternative", "quick", "project", "docs"] as const) {
@@ -189,4 +213,4 @@ export function resourcesForSkill(skill: Skill): { slot: string; resource: Resou
   return out;
 }
 
-export type { Challenge, PracticeExercise, Project, Resource, Roadmap, Skill };
+export type { BlogBlock, BlogCategory, BlogPost, Challenge, PracticeExercise, Project, Resource, Roadmap, Skill };

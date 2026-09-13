@@ -7,7 +7,7 @@ import { progress } from "@/db/schema";
 import { getSession } from "@/lib/session";
 
 const itemSchema = z.object({
-  entityType: z.enum(["roadmap", "skill", "resource", "challenge", "project"]),
+  entityType: z.enum(["roadmap", "skill", "resource", "challenge", "project", "practice"]),
   entityId: z.string().min(1).max(80),
   status: z.enum(["started", "completed"]),
   updatedAt: z.number().optional(),

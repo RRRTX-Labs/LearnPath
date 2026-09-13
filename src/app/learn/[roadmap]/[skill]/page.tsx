@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LearnClient } from "./ui";
-import { practiceById, resourceById, roadmapBySlug, skillById, skillBySlug } from "@/lib/content";
+import { challengeById, practiceById, projectById, resourceById, roadmapBySlug, skillById, skillBySlug, skills } from "@/lib/content";
 
 type Props = { params: Promise<{ roadmap: string; skill: string }> };
 
@@ -27,6 +27,24 @@ export default async function LearnPage({ params }: Props) {
   const alt = skill.resources.alternative ? resourceById.get(skill.resources.alternative) : undefined;
   const practice = skill.practiceId ? practiceById.get(skill.practiceId) : undefined;
 
+  const node = roadmap.nodes[idx];
+  const stageIdx = roadmap.stages.findIndex((st) => st.nodeIds.includes(node.id));
+  const stage = stageIdx >= 0 ? roadmap.stages[stageIdx] : null;
+  const stagePos = stage ? stage.nodeIds.indexOf(node.id) + 1 : 0;
+
+  const unlocks = skills
+    .filter((s2) => s2.prerequisites.includes(skill.id))
+    .slice(0, 4)
+    .map((s2) => ({ slug: s2.slug, title: s2.title }));
+  const skillChallenges = skill.challengeIds
+    .map((id) => challengeById.get(id))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c))
+    .map((c) => ({ slug: c.slug, title: c.title, id: c.id }));
+  const skillProjects = skill.projectIds
+    .map((id) => projectById.get(id))
+    .filter((pr): pr is NonNullable<typeof pr> => Boolean(pr))
+    .map((pr) => ({ slug: pr.slug, title: pr.title }));
+
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6">
       <p className="eyebrow">
@@ -49,6 +67,13 @@ export default async function LearnPage({ params }: Props) {
         best={best ?? null}
         altHref={alt ? `/resources/${alt.id}` : undefined}
         practice={practice ?? null}
+        stageTitle={stage?.title ?? null}
+        stageIndex={stageIdx >= 0 ? stageIdx : null}
+        stagePos={stagePos}
+        stageSize={stage ? stage.nodeIds.length : 0}
+        unlocks={unlocks}
+        skillChallenges={skillChallenges}
+        skillProjects={skillProjects}
       />
     </div>
   );

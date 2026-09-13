@@ -64,6 +64,8 @@ export function SiteFooter() {
         <nav aria-label="Project">
           <p className="eyebrow mb-3">Project</p>
           <ul className="space-y-2 text-sm text-muted">
+            <li><Link className="hover:text-fg" href="/blog">Journal</Link></li>
+            <li><Link className="hover:text-fg" href="/about">About & RRRTX Labs</Link></li>
             <li><Link className="hover:text-fg" href="/community">Community</Link></li>
             <li><Link className="hover:text-fg" href="/open-source">Open source</Link></li>
             <li><Link className="hover:text-fg" href="/privacy">Privacy</Link></li>
@@ -71,6 +73,17 @@ export function SiteFooter() {
           </ul>
         </nav>
       </div>
+
+      {/* ------------------------------------------------ brand moment */}
+      <div className="overflow-hidden border-t border-line py-12" aria-hidden>
+        <p className="wordmark select-none whitespace-nowrap text-center text-[13vw] leading-none md:text-[7.5rem]">
+          LEARNPATH
+        </p>
+        <p className="mt-6 text-center font-mono text-[11px] uppercase tracking-[0.28em] text-muted">
+          Built by RRRTX Labs
+        </p>
+      </div>
+
       <p className="border-t border-line py-4 text-center font-mono text-[11px] uppercase tracking-wider text-muted">
         Free and open source. No certificates. No paywall. No trackers.
       </p>

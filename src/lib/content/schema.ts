@@ -33,6 +33,17 @@ export const resourceWarningSchema = z.enum([
   "framework_version_sensitive",
 ]);
 
+/** v2 Wave 1 — transparent editorial review. Replaces the numeric-score display
+ *  (kept in `editorScore` for sorting only) with honest, human-readable dimensions. */
+const starsSchema = z.number().int().min(1).max(5);
+export const resourceReviewSchema = z.object({
+  clarity: starsSchema,
+  handsOn: starsSchema,
+  freshness: starsSchema,
+  projects: starsSchema,
+  beginner: starsSchema,
+});
+
 export const resourceSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -56,6 +67,42 @@ export const resourceSchema = z.object({
   warnings: z.array(resourceWarningSchema).default([]),
   learningOutcomes: z.array(z.string()).default([]),
   playlistVideoCount: z.number().int().positive().optional(),
+  // v2 Wave 1: optional editorial review dimensions (never invent values — only
+  // fill from real editorial judgment recorded in editorNote/lastVerified).
+  review: resourceReviewSchema.optional(),
+});
+
+/* ------------------------------ Journal (blog) ------------------------------ */
+
+export const blogCategorySchema = z.enum(["ai-tooling", "security", "ecosystem", "learning"]);
+
+export const blogLinkSchema = z.object({
+  label: z.string().min(1),
+  url: z.string().url(),
+});
+
+/** Paragraph/list text supports minimal inline links: [label](https://...). */
+export const blogBlockSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("p"), text: z.string().min(1) }),
+  z.object({ type: z.literal("h2"), text: z.string().min(1) }),
+  z.object({ type: z.literal("list"), ordered: z.boolean().default(false), items: z.array(z.string()).min(1) }),
+  z.object({ type: z.literal("quote"), text: z.string().min(1), cite: z.string().optional() }),
+  z.object({ type: z.literal("sources"), items: z.array(blogLinkSchema).min(1) }),
+]);
+
+export const blogPostSchema = z.object({
+  id: z.string().min(1),
+  slug: z.string().min(1),
+  title: z.string().min(1),
+  excerpt: z.string().min(1),
+  category: blogCategorySchema,
+  author: z.string().min(1),
+  publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  readingMinutes: z.number().int().positive(),
+  cover: z.string().min(1),
+  relatedSkillIds: z.array(z.string()).default([]),
+  relatedRoadmapIds: z.array(z.string()).default([]),
+  body: z.array(blogBlockSchema).min(1),
 });
 
 export const skillSchema = z.object({
@@ -170,6 +217,17 @@ export type Roadmap = z.infer<typeof roadmapSchema>;
 export type Challenge = z.infer<typeof challengeSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type PracticeExercise = z.infer<typeof practiceExerciseSchema>;
+export type ResourceReview = z.infer<typeof resourceReviewSchema>;
+export type BlogPost = z.infer<typeof blogPostSchema>;
+export type BlogBlock = z.infer<typeof blogBlockSchema>;
+export type BlogCategory = z.infer<typeof blogCategorySchema>;
+
+export const blogCategoryCopy: Record<BlogCategory, string> = {
+  "ai-tooling": "AI & tooling",
+  security: "Security",
+  ecosystem: "Ecosystem",
+  learning: "Learning",
+};
 
 export const labelCopy: Record<z.infer<typeof resourceLabelSchema>, string> = {
   "best-overall": "LearnPath pick",

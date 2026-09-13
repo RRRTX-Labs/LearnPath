@@ -1,9 +1,9 @@
 import MiniSearch from "minisearch";
-import { challenges, projects, resources, roadmaps, skills } from "./content";
+import { blogPosts, challenges, projects, resources, roadmaps, skills } from "./content";
 
 export type SearchHit = {
   id: string;
-  kind: "roadmap" | "skill" | "resource" | "project" | "challenge";
+  kind: "roadmap" | "skill" | "resource" | "project" | "challenge" | "blog";
   title: string;
   href: string;
   excerpt: string;
@@ -52,6 +52,14 @@ function getIndex() {
       href: `/projects/${p.slug}`,
       excerpt: p.summary,
       body: `${p.title} ${p.summary} ${p.description}`,
+    })),
+    ...blogPosts.map((b) => ({
+      id: `blog:${b.id}`,
+      kind: "blog" as const,
+      title: b.title,
+      href: `/blog/${b.slug}`,
+      excerpt: b.excerpt.slice(0, 160),
+      body: `${b.title} ${b.excerpt} ${b.category}`,
     })),
     ...challenges.map((c) => ({
       id: `challenge:${c.id}`,
