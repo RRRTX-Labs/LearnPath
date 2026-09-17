@@ -2,10 +2,14 @@
 
 These two files are the output of LearnPath's resource-research pass (2026-09-12):
 
-- `learnpath-youtube-resources.json` — the full research dataset (schema v5): 19 categories,
-  172 shipped resources, 8 rejected (embed disabled by owner), verification evidence per item.
-- `learnpath-resources.import.json` — the same 172 records pre-shaped to LearnPath's
+- `learnpath-youtube-resources.json` — the full research dataset (schema v5): 20 categories,
+  261 resources (172 first pass + 89 verified expansion), 8 rejected (embed disabled by owner),
+  verification evidence per item, `expansion_2026_09_15` section with canonical fixes and mis-slots.
+- `learnpath-resources.import.json` — the same 261 records pre-shaped to LearnPath's
   `resourceSchema` field names.
+- `RESEARCH-PACKAGE.md` — the 15-section research package: audit, removals, replacements,
+  all 89 new resources with scores and rationale, per-skill coverage, freshness report,
+  and Appendix A (exact changes the implementation agent must apply).
 
 They are **inputs**, not runtime content. Nothing in `src/` imports them. The canonical,
 validated catalog is generated from them by:
