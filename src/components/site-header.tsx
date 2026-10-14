@@ -33,6 +33,10 @@ export function SiteHeader() {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        return;
+      }
       if (e.key !== "/" || !target) return;
       const tag = target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || target.isContentEditable) return;
@@ -46,7 +50,7 @@ export function SiteHeader() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [router]);
+  }, [router, open]);
 
   return (
     <header className="glass sticky top-0 z-40 border-x-0 border-t-0">
@@ -98,16 +102,17 @@ export function SiteHeader() {
         </div>
         <button
           type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-fg md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-md border border-line text-fg md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
+          aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
         >
           {open ? <X className="h-5 w-5" aria-hidden /> : <Menu className="h-5 w-5" aria-hidden />}
         </button>
       </div>
       {open ? (
-        <div className="border-t border-line px-4 py-4 md:hidden">
+        <div id="mobile-nav" className="border-t border-line px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-1" aria-label="Primary mobile">
             {NAV.map((item) => (
               <Link
@@ -122,12 +127,21 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
+            <Link href="/skills" onClick={() => setOpen(false)} className="rounded-md px-3 py-3 text-base text-muted hover:text-fg">
+              Skills Catalog
+            </Link>
             <Link href="/search" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-muted">
               <Search className="h-4 w-4" aria-hidden /> Search
             </Link>
-            <Link href={GITHUB_URL} onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-muted">
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-muted hover:text-fg"
+            >
               <GitHubIcon className="h-4 w-4" /> GitHub
-            </Link>
+            </a>
             <Link href="/community" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-muted">
               <MessagesSquare className="h-4 w-4" aria-hidden /> Discord
             </Link>

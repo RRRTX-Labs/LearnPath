@@ -24,6 +24,15 @@ type Ctx = {
 
 const ProgressContext = createContext<Ctx | null>(null);
 
+function safeParseJson<T>(raw: string | null, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
@@ -35,8 +44,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const local: ProgressRecord[] = JSON.parse(localStorage.getItem(LOCAL_PROGRESS_KEY) || "[]");
-      const localNotes: Record<string, string> = JSON.parse(localStorage.getItem(LOCAL_NOTES_KEY) || "{}");
+      const local = safeParseJson<ProgressRecord[]>(localStorage.getItem(LOCAL_PROGRESS_KEY), []);
+      const localNotes = safeParseJson<Record<string, string>>(localStorage.getItem(LOCAL_NOTES_KEY), {});
       if (!isAuthed) {
         if (!cancelled) {
           setProgress(local);

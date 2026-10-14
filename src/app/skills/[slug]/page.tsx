@@ -1,4 +1,4 @@
-import { ArrowRight, Hammer, Terminal } from "lucide-react";
+import { ArrowRight, Award, ExternalLink, Hammer, Terminal } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,6 +12,11 @@ import {
   skillById,
   skillBySlug,
 } from "@/lib/content";
+import {
+  getAssessmentForSkill,
+  getFreeVerseAssessmentUrl,
+  getFreeVerseCredentialUrl,
+} from "@/lib/freeverse";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -32,6 +37,9 @@ export default async function SkillPage({ params }: Props) {
   if (!skill) notFound();
   const slotted = resourcesForSkill(skill);
   const parents = roadmaps.filter((r) => r.nodes.some((n) => n.skillId === skill.id));
+  const assessment = getAssessmentForSkill(skill.id);
+  const assessmentUrl = getFreeVerseAssessmentUrl(skill.slug);
+  const credentialUrl = getFreeVerseCredentialUrl(skill.slug);
 
   return (
     <Container className="max-w-5xl py-12">
@@ -85,6 +93,42 @@ export default async function SkillPage({ params }: Props) {
           ))}
         </ul>
       </section>
+
+      {assessment ? (
+        <section className="surface edge-accent mt-10 rounded-lg p-6" aria-labelledby="freeverse-assessment">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="eyebrow flex items-center gap-1.5 text-accent">
+              <Award className="h-4 w-4" aria-hidden /> RRRTX FreeVerse Assessment
+            </p>
+            <Badge tone="accent">Verifiable Credential</Badge>
+          </div>
+          <h2 id="freeverse-assessment" className="mt-2 font-display text-2xl">
+            {assessment.title}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            {assessment.description} Once you demonstrate this skill on LearnPath, prove your knowledge through
+            the official FreeVerse proctored skill assessment.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-mono text-muted">
+            <span>⏱ ~{assessment.durationMinutes} mins</span>
+            <span>📝 {assessment.questionCount} practical questions</span>
+            <span>🎯 Passing score: {assessment.passingScore}%</span>
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <ButtonLink href={assessmentUrl} external variant="accent" size="sm">
+              Take assessment on FreeVerse <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </ButtonLink>
+            <a
+              href={credentialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted hover:text-fg underline-offset-2 hover:underline"
+            >
+              View credential standards
+            </a>
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-12" aria-labelledby="resources">
         <SectionHeader eyebrow="Curated resources" title="Start with the pick, then branch out" />

@@ -4,7 +4,7 @@ import { nextCookies } from "better-auth/next-js";
 import { anonymous } from "better-auth/plugins/anonymous";
 import { getDb } from "@/db";
 import * as schema from "@/db/schema";
-import { envOr, firstNonEmptyEnv } from "./env";
+import { firstNonEmptyEnv } from "./env";
 import { getSiteUrl } from "./site-url";
 import { enabledProviders } from "./auth-providers";
 
@@ -17,10 +17,24 @@ const discordSecret = process.env.DISCORD_CLIENT_SECRET;
 
 export { enabledProviders };
 
+function getAuthSecret(): string {
+  const secret = firstNonEmptyEnv(process.env.BETTER_AUTH_SECRET);
+  if (secret) {
+    if (secret.length < 32 && process.env.NODE_ENV === "production" && process.env.VERCEL) {
+      throw new Error("BETTER_AUTH_SECRET must be at least 32 characters in production.");
+    }
+    return secret;
+  }
+  if (process.env.NODE_ENV === "production" && process.env.VERCEL) {
+    throw new Error("CRITICAL SECURITY ERROR: BETTER_AUTH_SECRET must be configured in production deployment.");
+  }
+  return "learnpath-dev-secret-change-me-32chars!";
+}
+
 export const auth = betterAuth({
   appName: "LearnPath",
   baseURL: firstNonEmptyEnv(process.env.BETTER_AUTH_URL) ?? getSiteUrl(),
-  secret: envOr("learnpath-dev-secret-change-me-32chars!", process.env.BETTER_AUTH_SECRET),
+  secret: getAuthSecret(),
   database: drizzleAdapter(getDb(), {
     provider: "sqlite",
     schema,

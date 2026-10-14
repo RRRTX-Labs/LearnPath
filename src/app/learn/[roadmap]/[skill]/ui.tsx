@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, Circle, Lock, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Award, Check, Circle, ExternalLink, Lock, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { MarkComplete } from "@/components/mark-complete";
@@ -13,6 +13,7 @@ import type { PracticeExercise, Resource, Skill } from "@/lib/content";
 import { skillProof, PROOF_STATE_LABEL } from "@/lib/proof";
 import { useProgress } from "@/components/progress-provider";
 import { completedIds } from "@/lib/progress-shared";
+import { getAssessmentForSkill, getFreeVerseAssessmentUrl } from "@/lib/freeverse";
 import { cn } from "@/lib/utils";
 
 type NodeLite = { id: string; title: string; slug: string; skillId: string };
@@ -60,6 +61,8 @@ export function LearnClient({
   const doneResources = completedIds(progress, "resource");
   const doneChallenges = completedIds(progress, "challenge");
   const prereqsMet = skill.prerequisites.every((id) => completedIds(progress, "skill").has(id));
+  const assessment = getAssessmentForSkill(skill.id);
+  const assessmentUrl = getFreeVerseAssessmentUrl(skill.slug, { roadmapSlug });
 
   const tabs: { id: TabId; label: string }[] = [
     { id: "path", label: "Path" },
@@ -348,6 +351,29 @@ export function LearnClient({
             <p className={cn("mt-3 font-mono text-[11px] uppercase tracking-wider", proof.demonstrated ? "text-accent" : "text-muted")}>
               {proof.demonstrated ? "Skill demonstrated" : "Not demonstrated yet"}
             </p>
+
+            {assessment ? (
+              <div className="mt-4 border-t border-line pt-3">
+                <p className="text-xs text-muted flex items-center gap-1">
+                  <Award className="h-3.5 w-3.5 text-accent" aria-hidden />
+                  {proof.demonstrated ? "Ready for verification:" : "Matching FreeVerse assessment:"}
+                </p>
+                <a
+                  href={assessmentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "mt-2 flex items-center justify-between gap-2 rounded-md p-2 text-xs transition-colors",
+                    proof.demonstrated
+                      ? "bg-accent-soft text-accent hover:opacity-90 font-medium"
+                      : "border border-line text-muted hover:text-fg hover:border-line-strong",
+                  )}
+                >
+                  <span className="truncate">{assessment.title}</span>
+                  <ExternalLink className="h-3 w-3 shrink-0" aria-hidden />
+                </a>
+              </div>
+            ) : null}
           </section>
 
           <section

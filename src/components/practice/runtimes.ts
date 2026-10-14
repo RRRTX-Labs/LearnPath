@@ -72,14 +72,18 @@ export async function runJs(code: string, language: "javascript" | "typescript")
   iframe.setAttribute("sandbox", "allow-scripts");
   iframe.style.display = "none";
   const id = crypto.randomUUID();
-  const wrapped = source.replace(/export\s+function/g, "function").replace(/export\s+const/g, "const");
+  const safeWrapped = source
+    .replace(/export\s+function/g, "function")
+    .replace(/export\s+const/g, "const")
+    .replace(/<\/script/gi, "<\\/script");
+
   const srcdoc = `<!doctype html><html><body><script>
     const logs = [];
     const orig = console.log;
     console.log = (...a) => { logs.push(a.map(v => typeof v === 'object' ? JSON.stringify(v) : String(v)).join(' ')); };
     window.onerror = (m) => parent.postMessage({ id: '${id}', error: String(m), logs }, '*');
     try {
-      const __result = (function(){ ${wrapped}
+      const __result = (function(){ ${safeWrapped}
         return typeof __lp_last !== 'undefined' ? __lp_last : undefined;
       })();
       parent.postMessage({ id: '${id}', result: __result, logs }, '*');
@@ -90,6 +94,8 @@ export async function runJs(code: string, language: "javascript" | "typescript")
 
   return new Promise((resolve) => {
     const onMessage = (event: MessageEvent) => {
+      // Validate that the message originated from our sandboxed iframe
+      if (event.source !== iframe.contentWindow) return;
       if (event.data?.id !== id) return;
       cleanup();
       resolve({

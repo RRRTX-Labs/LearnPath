@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Compass, NotebookPen, Trophy } from "lucide-react";
+import { ArrowRight, Award, Compass, ExternalLink, NotebookPen, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useProgress } from "@/components/progress-provider";
 import { Badge, ButtonLink, EmptyState, ProgressBar } from "@/components/ui";
@@ -17,6 +17,7 @@ import {
 } from "@/lib/content";
 import { proofSummary } from "@/lib/proof";
 import { completedIds } from "@/lib/progress-shared";
+import { getAssessmentForSkill, getFreeVerseAssessmentUrl } from "@/lib/freeverse";
 
 function timeAgo(ts: number) {
   const mins = Math.max(1, Math.round((Date.now() - ts) / 60000));
@@ -223,6 +224,40 @@ export function MeClient() {
             <p className="meta mt-2">of {projects.length} project briefs</p>
           </div>
         </div>
+
+        {proof.demonstratedCount > 0 ? (
+          <div className="surface edge-accent mt-4 rounded-lg p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-accent" aria-hidden />
+                <h3 className="font-display text-lg">Verify your demonstrated skills on RRRTX FreeVerse</h3>
+              </div>
+              <Badge tone="accent">Verifiable Credentials</Badge>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              You have demonstrated {proof.demonstratedCount} {proof.demonstratedCount === 1 ? "skill" : "skills"}.
+              Take the matching proctored assessments on FreeVerse to earn cryptographic, verifiable credentials.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {proof.demonstratedSkills.slice(0, 3).map((s) => {
+                const assessment = getAssessmentForSkill(s.id);
+                const url = getFreeVerseAssessmentUrl(s.slug);
+                return (
+                  <a
+                    key={s.id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-3 py-1.5 text-xs text-fg hover:border-accent hover:text-accent transition-colors"
+                  >
+                    <span>Assess {assessment?.title ?? s.title}</span>
+                    <ExternalLink className="h-3 w-3" aria-hidden />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </section>
 
       {/* ------------------------------------------- notes + recent activity */}

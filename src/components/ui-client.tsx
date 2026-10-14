@@ -36,7 +36,7 @@ export function Tabs({
       role="tablist"
       aria-label={label}
       className={cn(
-        "flex flex-wrap gap-1 rounded-pill border border-line bg-bg-sunken p-1",
+        "flex flex-wrap gap-1 rounded-lg border border-line bg-bg-sunken p-1",
         className,
       )}
     >
@@ -55,8 +55,8 @@ export function Tabs({
               if (e.key === "ArrowLeft") go(tabs[(i - 1 + tabs.length) % tabs.length].id);
             }}
             className={cn(
-              "min-h-9 rounded-pill px-3.5 text-sm transition-colors duration-150",
-              selected ? "bg-surface-2 text-fg shadow-1" : "text-muted hover:text-fg",
+              "min-h-9 rounded-md px-3.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              selected ? "bg-surface-2 text-fg shadow-1 font-medium" : "text-muted hover:text-fg",
             )}
           >
             {t.label}
