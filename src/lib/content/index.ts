@@ -185,6 +185,25 @@ export function getRoadmapProgress(roadmap: Roadmap, completedSkillIds: Set<stri
   return { done, total: required.length, percent };
 }
 
+export function isValidEntity(entityType: string, entityId: string): boolean {
+  switch (entityType) {
+    case "roadmap":
+      return roadmaps.some((r) => r.id === entityId || r.slug === entityId);
+    case "skill":
+      return skillById.has(entityId) || skillBySlug.has(entityId);
+    case "resource":
+      return resourceById.has(entityId);
+    case "challenge":
+      return challengeById.has(entityId) || challengeBySlug.has(entityId);
+    case "project":
+      return projectById.has(entityId) || projectBySlug.has(entityId);
+    case "practice":
+      return practiceById.has(entityId);
+    default:
+      return false;
+  }
+}
+
 export function resourcesForSkill(skill: Skill): { slot: string; resource: Resource }[] {
   const slots: { slot: string; key: keyof Skill["resources"] }[] = [
     { slot: "LearnPath pick", key: "best" },

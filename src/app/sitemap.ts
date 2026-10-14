@@ -23,9 +23,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
   const urls: MetadataRoute.Sitemap = [
     entry(`${base}/`, "weekly", 1),
-    ...["/roadmaps", "/practice", "/challenges", "/projects", "/resources", "/courses", "/community", "/open-source"].map(
-      (path) => entry(`${base}${path}`, "weekly", 0.8),
-    ),
+    ...[
+      "/roadmaps",
+      "/skills",
+      "/practice",
+      "/challenges",
+      "/projects",
+      "/resources",
+      "/courses",
+      "/blog",
+      "/about",
+      "/community",
+      "/open-source",
+      "/privacy",
+      "/terms",
+    ].map((path) => entry(`${base}${path}`, "weekly", 0.8)),
     ...roadmaps.map((r) => entry(`${base}/roadmaps/${r.slug}`, "weekly", 0.9)),
     ...skills.map((s) => entry(`${base}/skills/${s.slug}`, "monthly", 0.7)),
     ...resources.map((r) =>

@@ -47,8 +47,9 @@ export function SiteFooter() {
           <p className="eyebrow mb-3">Learn</p>
           <ul className="space-y-2 text-sm text-muted">
             <li><Link className="hover:text-fg" href="/roadmaps">Roadmaps</Link></li>
-            <li><Link className="hover:text-fg" href="/skills/python-syntax">Skills</Link></li>
+            <li><Link className="hover:text-fg" href="/skills">Skills</Link></li>
             <li><Link className="hover:text-fg" href="/resources">Resources</Link></li>
+            <li><Link className="hover:text-fg" href="/courses">Courses</Link></li>
             <li><Link className="hover:text-fg" href="/practice">Practice</Link></li>
           </ul>
         </nav>
@@ -84,9 +85,23 @@ export function SiteFooter() {
         </p>
       </div>
 
-      <p className="border-t border-line py-4 text-center font-mono text-[11px] uppercase tracking-wider text-muted">
-        Free and open source. No certificates. No paywall. No trackers.
-      </p>
+      <div className="border-t border-line py-4 px-4 text-center font-mono text-[11px] uppercase tracking-wider text-muted space-y-1">
+        <p>
+          © {new Date().getFullYear()} RRRTX Labs · Free and open source curriculum under MIT License.
+        </p>
+        <p className="normal-case tracking-normal text-muted/80 text-xs">
+          LearnPath is an independent educational platform. Verifiable skill assessments and credentials are authenticated via{" "}
+          <a
+            href="https://freeverse.rrrtx.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline font-mono"
+          >
+            RRRTX FreeVerse
+          </a>
+          .
+        </p>
+      </div>
     </footer>
   );
 }

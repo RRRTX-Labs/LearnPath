@@ -5,6 +5,8 @@ import { getDb } from "@/db";
 import { ensureSchema } from "@/db/ensure";
 import { progress } from "@/db/schema";
 import { getSession } from "@/lib/session";
+import { isValidEntity } from "@/lib/content";
+import { checkRateLimit, createRateLimitExceededResponse, getClientIp } from "@/lib/rate-limit";
 
 const itemSchema = z.object({
   entityType: z.enum(["roadmap", "skill", "resource", "challenge", "project", "practice"]),
@@ -13,10 +15,15 @@ const itemSchema = z.object({
   updatedAt: z.number().optional(),
 });
 
-export async function GET() {
+export async function GET(req: Request) {
   await ensureSchema();
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(`progress-get:${session.user.id}:${ip}`, { windowMs: 60 * 1000, max: 120 });
+  if (!rl.success) return createRateLimitExceededResponse(rl.limit, rl.resetMs);
+
   const db = getDb();
   const rows = await db.select().from(progress).where(eq(progress.userId, session.user.id));
   return NextResponse.json(
@@ -33,8 +40,28 @@ export async function POST(req: Request) {
   await ensureSchema();
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const parsed = itemSchema.safeParse(await req.json());
-  if (!parsed.success) return NextResponse.json({ error: "Invalid" }, { status: 400 });
+
+  const rl = checkRateLimit(`progress-post:${session.user.id}`, { windowMs: 60 * 1000, max: 60 });
+  if (!rl.success) return createRateLimitExceededResponse(rl.limit, rl.resetMs);
+
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const parsed = itemSchema.safeParse(rawBody);
+  if (!parsed.success) return NextResponse.json({ error: "Invalid request schema" }, { status: 400 });
+
+  // Validate that the entity actually exists in our content catalog
+  if (!isValidEntity(parsed.data.entityType, parsed.data.entityId)) {
+    return NextResponse.json(
+      { error: `Unknown ${parsed.data.entityType} ID: ${parsed.data.entityId}` },
+      { status: 400 },
+    );
+  }
+
   const db = getDb();
   const now = new Date(parsed.data.updatedAt ?? Date.now());
   const id = crypto.randomUUID();
@@ -48,7 +75,9 @@ export async function POST(req: Request) {
         eq(progress.entityId, parsed.data.entityId),
       ),
     );
+
   if (existing[0]) {
+    // Sticky completion: never downgrade from completed to started
     if (existing[0].status === "completed" && parsed.data.status === "started") {
       return NextResponse.json({ ok: true });
     }
@@ -73,10 +102,27 @@ export async function PUT(req: Request) {
   await ensureSchema();
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const parsed = z.object({ items: z.array(itemSchema) }).safeParse(await req.json());
-  if (!parsed.success) return NextResponse.json({ error: "Invalid" }, { status: 400 });
+
+  const rl = checkRateLimit(`progress-put:${session.user.id}`, { windowMs: 60 * 1000, max: 30 });
+  if (!rl.success) return createRateLimitExceededResponse(rl.limit, rl.resetMs);
+
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const parsed = z.object({ items: z.array(itemSchema).min(1).max(250) }).safeParse(rawBody);
+  if (!parsed.success) return NextResponse.json({ error: "Invalid batch payload" }, { status: 400 });
+
+  // Filter out any forged or unknown entity records
+  const validItems = parsed.data.items.filter((item) =>
+    isValidEntity(item.entityType, item.entityId),
+  );
+
   const db = getDb();
-  for (const item of parsed.data.items) {
+  for (const item of validItems) {
     const now = new Date(item.updatedAt ?? Date.now());
     const existing = await db
       .select()
@@ -102,5 +148,5 @@ export async function PUT(req: Request) {
       });
     }
   }
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, processed: validItems.length });
 }

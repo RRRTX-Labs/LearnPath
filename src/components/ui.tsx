@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 /* ------------------------------------------------------------------ button */
 
 export const buttonStyles = cva(
-  "inline-flex items-center justify-center gap-2 font-medium transition-[background-color,border-color,color,opacity,transform] duration-150 select-none disabled:opacity-50 disabled:pointer-events-none active:translate-y-px",
+  "inline-flex items-center justify-center gap-2 font-medium transition-[background-color,border-color,color,opacity,transform] duration-150 select-none disabled:opacity-50 disabled:pointer-events-none active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
   {
     variants: {
       variant: {
@@ -225,7 +225,7 @@ export function Tabs<T extends string>({
 }) {
   const id = useId();
   return (
-    <div role="tablist" aria-label={label} className={cn("flex flex-wrap gap-1 rounded-pill border border-line bg-bg-sunken p-1", className)}>
+    <div role="tablist" aria-label={label} className={cn("flex flex-wrap gap-1 rounded-lg border border-line bg-bg-sunken p-1", className)}>
       {tabs.map((t) => {
         const selected = t.id === active;
         return (
@@ -243,8 +243,8 @@ export function Tabs<T extends string>({
               if (e.key === "ArrowLeft") onChange(tabs[(i - 1 + tabs.length) % tabs.length].id);
             }}
             className={cn(
-              "min-h-9 rounded-pill px-3.5 text-sm capitalize transition-colors duration-150",
-              selected ? "bg-surface-2 text-fg shadow-1" : "text-muted hover:text-fg",
+              "min-h-9 rounded-md px-3.5 text-sm capitalize transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              selected ? "bg-surface-2 text-fg shadow-1 font-medium" : "text-muted hover:text-fg",
             )}
           >
             {t.label}
