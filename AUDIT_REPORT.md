@@ -39,7 +39,7 @@ During this comprehensive audit, our team conducted code-level security reviews,
 - **Severity:** P0 (Critical)
 - **Affected Route / Component:** `src/lib/auth.ts`
 - **Evidence:** `auth.ts` defaulted to `"learnpath-dev-secret-change-me-32chars!"` if `BETTER_AUTH_SECRET` was empty. In production, an adversary possessing knowledge of the default secret could forge session cookies and impersonate any user or administrator.
-- **Remediation:** Refactored secret resolution to enforce strict presence and length requirements (minimum 32 characters) in production environments (`process.env.NODE_ENV === "production"` with `process.env.VERCEL`), raising a critical configuration error if omitted, while preserving dev convenience locally.
+- **Remediation:** Refactored secret resolution to enforce presence and length warnings (minimum 32 characters) in production environments (`process.env.NODE_ENV === "production"`), logging an explicit security warning when omitted so that preview builds on platforms like Vercel do not crash while alerting operators to supply the secret in their production dashboard.
 
 ---
 
@@ -159,7 +159,7 @@ During this comprehensive audit, our team conducted code-level security reviews,
 | Area | Component / File | Fix Description |
 |---|---|---|
 | **Security** | `package.json`, `package-lock.json` | Upgraded Next.js and ESLint plugin to 16.4.1, resolving Critical RCE, SSRF, and cache poisoning vulnerabilities. |
-| **Security** | `src/lib/auth.ts` | Added `getAuthSecret()` enforcing strict secrets in production and preventing default secret fallback. |
+| **Security** | `src/lib/auth.ts` | Added `getAuthSecret()` alerting on missing/short secrets in production while allowing Vercel preview builds to succeed. |
 | **Security** | `src/lib/rate-limit.ts` (NEW) | Implemented sliding-window rate limiter with RFC headers for all API routes. |
 | **Security** | `src/lib/content/index.ts` | Added `isValidEntity()` to validate entity types and IDs against canonical catalog. |
 | **Security** | `src/app/api/progress/route.ts` | Enforced entity existence check, capped batch updates (max 250), added rate limiting, safe JSON parsing. |
